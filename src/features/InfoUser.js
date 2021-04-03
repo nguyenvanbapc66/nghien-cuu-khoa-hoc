@@ -8,11 +8,15 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const InfoUser = (props) => {
-  const [isOpenDetail, setIsOpenDetail] = useState(false);
+  const [isOpenDetail, setIsOpenDetail] = useState(true);
 
   const style = {
     height: "100%",
     marginBottom: "50px",
+  };
+
+  const handleBtnDeleteUser = (id) => {
+    props.deleteUser(id)
   };
 
   return (
@@ -23,7 +27,20 @@ const InfoUser = (props) => {
             <div className="name-user">{props.nameUser}</div>
             <FontAwesomeIcon className="check" icon={faCheckCircle} />
           </div>
-          <Button color="#3498db" name="Detail" onClick={() => setIsOpenDetail(!isOpenDetail)} />
+          <div className="input-wrapper">
+            <div className="inner">
+              <Button
+                color="#e74c3c"
+                name="Delete"
+                onClick={() => handleBtnDeleteUser(props.id)}
+              />
+              <Button
+                color="#3498db"
+                name="Detail"
+                onClick={() => setIsOpenDetail(!isOpenDetail)}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -37,49 +54,31 @@ const InfoUser = (props) => {
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Họ và tên</div>
-                  <Input
-                    value={props.nameUser}
-                    disabled="disabled"
-                  />
+                  <Input value={props.nameUser} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Lương</div>
-                  <Input
-                    value={props.salary}
-                    disabled="disabled"
-                  />
+                  <Input value={props.salary} disabled="disabled" />
                 </div>
               </div>
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Ngày sinh</div>
-                  <Input
-                    value={props.date}
-                    disabled="disabled"
-                  />
+                  <Input value={props.date} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Tỉnh / Thành phố</div>
-                  <Input
-                    value={props.region}
-                    disabled="disabled"
-                  />
+                  <Input value={props.region} disabled="disabled" />
                 </div>
               </div>
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Giới tính</div>
-                  <Input
-                    value={props.gender}
-                    disabled="disabled"
-                  />
+                  <Input value={props.gender} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Kết hôn</div>
-                  <Input
-                    value={props.married}
-                    disabled="disabled"
-                  />
+                  <Input value={props.married} disabled="disabled" />
                 </div>
               </div>
             </div>

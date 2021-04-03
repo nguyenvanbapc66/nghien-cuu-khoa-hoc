@@ -17,6 +17,8 @@ const FormInfoUser = (props) => {
   const [gender, setGender] = useState("Nam");
   const [married, setMarried] = useState("Không");
 
+  const [listUsers, setListUsers] = useState([]);
+
   const [error, setError] = useState("");
 
   const optionGender = [{ value: "Nam" }, { value: "Nữ" }];
@@ -38,7 +40,10 @@ const FormInfoUser = (props) => {
     };
 
     setError("");
-    props.handleListUsersData(infoUser);
+    const data = [...listUsers]
+    data.push(infoUser)
+
+    props.updateListUsers(data);
   };
 
   return (
