@@ -34,7 +34,7 @@ const App = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
             <Nav.Link href="/form">Nhập thông tin</Nav.Link>
-            <Nav.Link href="/users">Thông tin khách hàng</Nav.Link>
+            <Nav.Link href="/users">Kết quả cho vay</Nav.Link>
             <NavDropdown title="Thuật toán" id="basic-nav-dropdown">
               <NavDropdown.Item href="#naive-bayes-classifer">
                 Naive Bayes Classifer
