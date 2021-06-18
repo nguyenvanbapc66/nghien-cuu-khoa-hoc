@@ -7,26 +7,68 @@ import {
   RegionDropdown,
   CountryRegionData,
 } from "react-country-region-selector";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCheckCircle,
+  faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
 
-const FormInfoUser = (props) => {
+const FormInfoUser = ({ listUsers, updateListUsers }) => {
   const [nameUser, setNameUser] = useState("");
-  const [salary, setSalary] = useState(0);
+  const [salary, setSalary] = useState("");
   const [date, setDate] = useState("");
   const [country, setCountry] = useState("Vietnam");
   const [region, setRegion] = useState("");
   const [gender, setGender] = useState("Nam");
   const [married, setMarried] = useState("Không");
+  const [collateral, setCollateral] = useState("Tín chấp");
+  const [paymentMethod, setPaymentMethod] = useState("Chuyển khoản");
+  const [purpose, setPurpose] = useState("Tiêu dùng");
+  const [yearNumber, setYearNumber] = useState("");
+  const [money, setMoney] = useState("");
 
-  const [listUsers, setListUsers] = useState([]);
+  const [error, setError] = useState(false);
+  const option = {
+    gender: [{ value: "Nam" }, { value: "Nữ" }],
+    married: [{ value: "Có gia đình" }, { value: "Chưa gia đình" }],
+    collaterals: [
+      { value: "Tín chấp" },
+      { value: "Phương tiện vận tải" },
+      { value: "Bất động sản" },
+      { value: "Khác" },
+    ],
+    paymentMethods: [{ value: "Chuyển khoản" }, { value: "Tiền mặt" }],
+    purposes: [
+      { value: "Tiêu dùng" },
+      { value: "Mua BĐS" },
+      { value: "Mua Oto" },
+      { value: "Khác" },
+    ],
+  };
 
-  const [error, setError] = useState("");
-
-  const optionGender = [{ value: "Nam" }, { value: "Nữ" }];
-  const optionMarried = [{ value: "Có" }, { value: "Không" }];
+  const notiHandleBtnSubmit = () => {
+    setTimeout(() => {
+      document.getElementById("modal-success").style.display = "none";
+    }, 2000);
+    document.getElementById("modal-success").style.display = "block";
+  };
 
   const handleClickBtnSubmit = () => {
-    if (!nameUser || !salary || !date || !region || !gender || !married) {
-      return setError("Vui lòng điền đầy đủ thông tin");
+    if (
+      !nameUser ||
+      !salary ||
+      !date ||
+      !region ||
+      !gender ||
+      !married ||
+      !collateral ||
+      !paymentMethod ||
+      !purpose ||
+      !yearNumber ||
+      !money
+    ) {
+      notiHandleBtnSubmit();
+      return setError(true);
     }
 
     let infoUser = {
@@ -37,17 +79,46 @@ const FormInfoUser = (props) => {
       region,
       gender,
       married,
+      collateral,
+      paymentMethod,
+      purpose,
+      yearNumber,
+      money,
     };
 
-    setError("");
-    const data = [...listUsers]
-    data.push(infoUser)
+    notiHandleBtnSubmit();
 
-    props.updateListUsers(data);
+    setError(false);
+    const data = [...listUsers];
+    console.log(data);
+    data.push(infoUser);
+
+    updateListUsers(data);
   };
 
   return (
     <div className="container">
+      <div
+        id="modal-success"
+        className={error ? "modal-noti modal-fail" : "modal-noti modal-success"}
+        style={{ display: "none" }}
+      >
+        {!error ? (
+          <span className="inline">
+            <div className="p-right">
+              Chúc mừng <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
+              đã được vay
+            </div>
+            <FontAwesomeIcon className="check" icon={faCheckCircle} />
+          </span>
+        ) : (
+          <span className="inline">
+            <div className="p-right">Vui lòng điền đầy đủ thông tin</div>
+            <FontAwesomeIcon className="cancel" icon={faTimesCircle} />
+          </span>
+        )}
+      </div>
+
       <div className="form-info-user">
         <div className="header">
           <h2>Thông tin khách hàng</h2>
@@ -59,6 +130,7 @@ const FormInfoUser = (props) => {
               <Input
                 type="text"
                 value={nameUser}
+                placeholder="Nhập họ và tên"
                 onChange={(e) => setNameUser(e.target.value)}
               />
             </div>
@@ -93,7 +165,7 @@ const FormInfoUser = (props) => {
             <div className="inner">
               <div className="title-input">Giới tính</div>
               <Select
-                options={optionGender}
+                options={option.gender}
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
               />
@@ -101,11 +173,60 @@ const FormInfoUser = (props) => {
             <div className="inner">
               <div className="title-input">Kết hôn</div>
               <Select
-                options={optionMarried}
+                options={option.married}
                 value={married}
                 onChange={(e) => setMarried(e.target.value)}
               />
             </div>
+          </div>
+          <div className="input-wrapper">
+            <div className="inner">
+              <div className="title-input">Tài sản đảm bảo</div>
+              <Select
+                options={option.collaterals}
+                value={collateral}
+                onChange={(e) => setCollateral(e.target.value)}
+              />
+            </div>
+            <div className="inner">
+              <div className="title-input">Phương thức Trả Lương</div>
+              <Select
+                options={option.paymentMethods}
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="input-wrapper">
+            <div className="inner">
+              <div className="title-input">Mục đích vay</div>
+              <Select
+                options={option.purposes}
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+              />
+            </div>
+            <div className="inner">
+              <div className="title-input">Nhu cầu vay (Năm)</div>
+              <Input
+                type="number"
+                placeholder="Nhập số năm"
+                value={yearNumber}
+                onChange={(e) => setYearNumber(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="input-wrapper">
+            <div className="inner">
+              <div className="title-input">Giá trị đề nghị vay</div>
+              <Input
+                type="number"
+                placeholder="Nhập số tiền cần vay"
+                value={money}
+                onChange={(e) => setMoney(e.target.value)}
+              />
+            </div>
+            <div className="inner"></div>
           </div>
         </div>
         <div className="footer">

@@ -7,7 +7,21 @@ import {
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
-const InfoUser = (props) => {
+const InfoUser = ({
+  id,
+  nameUser,
+  salary,
+  date,
+  region,
+  gender,
+  married,
+  collateral,
+  paymentMethod,
+  purpose,
+  yearNumber,
+  money,
+  deleteUser,
+}) => {
   const [isOpenDetail, setIsOpenDetail] = useState(true);
 
   const style = {
@@ -16,7 +30,7 @@ const InfoUser = (props) => {
   };
 
   const handleBtnDeleteUser = (id) => {
-    props.deleteUser(id)
+    deleteUser(id);
   };
 
   return (
@@ -24,7 +38,7 @@ const InfoUser = (props) => {
       <div className="input-wrapper">
         <div className="loan">
           <div className="info">
-            <div className="name-user">{props.nameUser}</div>
+            <div className="name-user">{nameUser}</div>
             <FontAwesomeIcon className="check" icon={faCheckCircle} />
           </div>
           <div className="input-wrapper">
@@ -32,7 +46,7 @@ const InfoUser = (props) => {
               <Button
                 color="#e74c3c"
                 name="Delete"
-                onClick={() => handleBtnDeleteUser(props.id)}
+                onClick={() => handleBtnDeleteUser(id)}
               />
               <Button
                 color="#3498db"
@@ -54,32 +68,59 @@ const InfoUser = (props) => {
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Họ và tên</div>
-                  <Input value={props.nameUser} disabled="disabled" />
+                  <Input value={nameUser} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Lương</div>
-                  <Input value={props.salary} disabled="disabled" />
+                  <Input value={salary} disabled="disabled" />
                 </div>
               </div>
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Ngày sinh</div>
-                  <Input value={props.date} disabled="disabled" />
+                  <Input value={date} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Tỉnh / Thành phố</div>
-                  <Input value={props.region} disabled="disabled" />
+                  <Input value={region} disabled="disabled" />
                 </div>
               </div>
               <div className="input-wrapper">
                 <div className="inner">
                   <div className="title-input">Giới tính</div>
-                  <Input value={props.gender} disabled="disabled" />
+                  <Input value={gender} disabled="disabled" />
                 </div>
                 <div className="inner">
                   <div className="title-input">Kết hôn</div>
-                  <Input value={props.married} disabled="disabled" />
+                  <Input value={married} disabled="disabled" />
                 </div>
+              </div>
+              <div className="input-wrapper">
+                <div className="inner">
+                  <div className="title-input">Tài sản đảm bảo</div>
+                  <Input value={collateral} disabled="disabled" />
+                </div>
+                <div className="inner">
+                  <div className="title-input">Phương thức Trả Lương</div>
+                  <Input value={paymentMethod} disabled="disabled" />
+                </div>
+              </div>
+              <div className="input-wrapper">
+                <div className="inner">
+                  <div className="title-input">Mục đích vay</div>
+                  <Input value={purpose} disabled="disabled" />
+                </div>
+                <div className="inner">
+                  <div className="title-input">Nhu cầu vay (Năm)</div>
+                  <Input value={yearNumber} disabled="disabled" />
+                </div>
+              </div>
+              <div className="input-wrapper">
+                <div className="inner">
+                  <div className="title-input">Giá trị đề nghị vay</div>
+                  <Input value={money} disabled="disabled" />
+                </div>
+                <div className="inner"></div>
               </div>
             </div>
           </div>

@@ -1,13 +1,13 @@
 import React from "react";
 
-const Button = (props) => {
+const Button = ({ color, name, onClick }) => {
   const styleBtn = {
-    background: props.color,
+    background: color,
   };
 
   return (
-    <button style={styleBtn} onClick={props.onClick}>
-      {props.name}
+    <button style={styleBtn} onClick={onClick}>
+      {name}
     </button>
   );
 };
