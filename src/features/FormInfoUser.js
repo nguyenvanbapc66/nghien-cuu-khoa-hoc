@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const FormInfoUser = ({ listUsers, updateListUsers }) => {
+  const [isLoan, setLoan] = useState(false);
   const [nameUser, setNameUser] = useState("");
   const [salary, setSalary] = useState("");
   const [date, setDate] = useState("");
@@ -73,6 +74,7 @@ const FormInfoUser = ({ listUsers, updateListUsers }) => {
 
     let infoUser = {
       id: 1 + Math.random(),
+      loan: (Math.round(Math.random() * 1 + 0) * 1) / 1,
       nameUser,
       salary,
       date,
@@ -89,27 +91,53 @@ const FormInfoUser = ({ listUsers, updateListUsers }) => {
     notiHandleBtnSubmit();
 
     setError(false);
+    setLoan(infoUser.loan);
     const data = [...listUsers];
-    console.log(data);
     data.push(infoUser);
 
     updateListUsers(data);
+  };
+
+  const renderTextNotiLoan = (isLoan, nameUser) => {
+    return (
+      <>
+        {isLoan ? (
+          <>
+            <div className="p-right">
+              Chúc mừng <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
+              đã được vay
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="p-right">
+              Xin lỗi <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
+              chưa đủ tiêu chuẩn để cho vay
+            </div>
+          </>
+        )}
+      </>
+    );
   };
 
   return (
     <div className="container">
       <div
         id="modal-success"
-        className={error ? "modal-noti modal-fail" : "modal-noti modal-success"}
+        className={
+          error || !isLoan
+            ? "modal-noti modal-fail"
+            : "modal-noti modal-success"
+        }
         style={{ display: "none" }}
       >
         {!error ? (
           <span className="inline">
-            <div className="p-right">
-              Chúc mừng <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
-              đã được vay
-            </div>
-            <FontAwesomeIcon className="check" icon={faCheckCircle} />
+            {renderTextNotiLoan(isLoan, nameUser)}
+            <FontAwesomeIcon
+              className={isLoan ? "check" : "cancel"}
+              icon={isLoan ? faCheckCircle : faTimesCircle}
+            />
           </span>
         ) : (
           <span className="inline">

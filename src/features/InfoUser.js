@@ -9,6 +9,7 @@ import {
 
 const InfoUser = ({
   id,
+  loan,
   nameUser,
   salary,
   date,
@@ -39,7 +40,10 @@ const InfoUser = ({
         <div className="loan">
           <div className="info">
             <div className="name-user">{nameUser}</div>
-            <FontAwesomeIcon className="check" icon={faCheckCircle} />
+            <FontAwesomeIcon
+              className={loan ? "check" : "cancel"}
+              icon={loan ? faCheckCircle : faTimesCircle}
+            />
           </div>
           <div className="input-wrapper">
             <div className="inner">

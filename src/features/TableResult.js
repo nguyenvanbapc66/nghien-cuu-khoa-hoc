@@ -2,14 +2,16 @@ import React, { useEffect, useRef, useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import InfoUser from "./InfoUser";
+import RoundChart from "../components/RoundChart";
+import "../scss/tableResult.scss";
 
 const TableResult = ({ listUsers, updateListUsers }) => {
   const [nameCustomer, setNameCustomer] = useState("");
   const [newListUsers, setNewListUsers] = useState(listUsers);
 
   const deleteUser = (id) => {
-    const listUsers = [...listUsers];
     const listUsersUpdate = listUsers.filter((user) => id !== user.id);
+    setNewListUsers(listUsersUpdate);
 
     updateListUsers(listUsersUpdate);
   };
@@ -29,7 +31,8 @@ const TableResult = ({ listUsers, updateListUsers }) => {
   };
 
   return (
-    <div className="container-table">
+    <div className="container-table table-result">
+      <RoundChart listUsers={newListUsers} />
       <div className="table-result">
         <div className="header">
           <h2>Bảng kết quả cho vay</h2>
@@ -60,6 +63,7 @@ const TableResult = ({ listUsers, updateListUsers }) => {
               <InfoUser
                 key={user.id}
                 id={user.id}
+                loan={user.loan}
                 nameUser={user.nameUser}
                 salary={user.salary}
                 date={user.date}
