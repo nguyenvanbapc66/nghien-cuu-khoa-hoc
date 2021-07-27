@@ -1,273 +1,274 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Select from "../components/Select";
-import {
-  CountryDropdown,
-  RegionDropdown,
-  CountryRegionData,
-} from "react-country-region-selector";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCheckCircle,
-  faTimesCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import {RegionDropdown,} from "react-country-region-selector";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckCircle, faTimesCircle,} from "@fortawesome/free-solid-svg-icons";
+import {useParams} from "react-router-dom";
 
-const FormInfoUser = ({ listUsers, updateListUsers }) => {
-  const [isLoan, setLoan] = useState(false);
-  const [nameUser, setNameUser] = useState("");
-  const [salary, setSalary] = useState("");
-  const [date, setDate] = useState("");
-  const [country, setCountry] = useState("Vietnam");
-  const [region, setRegion] = useState("");
-  const [gender, setGender] = useState("Nam");
-  const [married, setMarried] = useState("Không");
-  const [collateral, setCollateral] = useState("Tín chấp");
-  const [paymentMethod, setPaymentMethod] = useState("Chuyển khoản");
-  const [purpose, setPurpose] = useState("Tiêu dùng");
-  const [yearNumber, setYearNumber] = useState("");
-  const [money, setMoney] = useState("");
+const FormInfoUser = ({listUsers, updateListUsers}) => {
+    const [nameUser, setNameUser] = useState("");
+    const [gender, setGender] = useState("Male");
+    const [married, setMarried] = useState("No");
+    const [dependents, setDependents] = useState("0");
+    const [selfEmployed, setSelfEmployed] = useState("No")
+    const [salary, setSalary] = useState("");
+    const [loanAmount, setLoanAmount] = useState("");
+    const [loanAmountTerm, setLoanAmountTerm] = useState("");
+    const [country, setCountry] = useState("Vietnam");
+    const [region, setRegion] = useState("");
+    const [creditHistory, setCreditHistory] = useState("");
 
-  const [error, setError] = useState(false);
-  const option = {
-    gender: [{ value: "Nam" }, { value: "Nữ" }],
-    married: [{ value: "Có gia đình" }, { value: "Chưa gia đình" }],
-    collaterals: [
-      { value: "Tín chấp" },
-      { value: "Phương tiện vận tải" },
-      { value: "Bất động sản" },
-      { value: "Khác" },
-    ],
-    paymentMethods: [{ value: "Chuyển khoản" }, { value: "Tiền mặt" }],
-    purposes: [
-      { value: "Tiêu dùng" },
-      { value: "Mua BĐS" },
-      { value: "Mua Oto" },
-      { value: "Khác" },
-    ],
-  };
-
-  const notiHandleBtnSubmit = () => {
-    setTimeout(() => {
-      document.getElementById("modal-success").style.display = "none";
-    }, 2000);
-    document.getElementById("modal-success").style.display = "block";
-  };
-
-  const handleClickBtnSubmit = () => {
-    if (
-      !nameUser ||
-      !salary ||
-      !date ||
-      !region ||
-      !gender ||
-      !married ||
-      !collateral ||
-      !paymentMethod ||
-      !purpose ||
-      !yearNumber ||
-      !money
-    ) {
-      notiHandleBtnSubmit();
-      return setError(true);
-    }
+    const {algorithm} = useParams()
+    const [isLoan, setLoan] = useState("");
+    const [error, setError] = useState(false);
+    const [score, setScore] = useState("1");
+    let path = ""
 
     let infoUser = {
-      id: 1 + Math.random(),
-      loan: (Math.round(Math.random() * 1 + 0) * 1) / 1,
-      nameUser,
-      salary,
-      date,
-      region,
-      gender,
-      married,
-      collateral,
-      paymentMethod,
-      purpose,
-      yearNumber,
-      money,
+        id: 1 + Math.random(),
+        loan: isLoan,
+        nameUser,
+        salary,
+        region,
+        gender,
+        married,
+        dependents, loanAmount, loanAmountTerm, selfEmployed, creditHistory
     };
 
-    notiHandleBtnSubmit();
+    const option = {
+        gender: [{value: "Male"}, {value: "Female"}],
+        married: [{value: "Yes"}, {value: "No"}],
+        selfEmployed: [{value: "Yes"}, {value: "No"}],
+    };
 
-    setError(false);
-    setLoan(infoUser.loan);
-    const data = [...listUsers];
-    data.push(infoUser);
+    if (algorithm === "naive-bayes-classifer") path = "predictNaiveBayes"
+    else if (algorithm === "random-forest-classifer") path = "predictRandomForest"
+    else if (algorithm === "decision-tree-classifer") path = "predictDecisionTree"
 
-    updateListUsers(data);
-  };
+    const notiHandleBtnSubmit = () => {
+        setTimeout(() => {
+            document.getElementById("modal-success").style.display = "none";
+        }, 2000);
+        document.getElementById("modal-success").style.display = "block";
+    };
 
-  const renderTextNotiLoan = (isLoan, nameUser) => {
-    return (
-      <>
-        {isLoan ? (
-          <>
-            <div className="p-right">
-              Chúc mừng <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
-              đã được vay
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="p-right">
-              Xin lỗi <span style={{ fontWeight: "bold" }}>{nameUser}</span>{" "}
-              chưa đủ tiêu chuẩn để cho vay
-            </div>
-          </>
-        )}
-      </>
-    );
-  };
-
-  return (
-    <div className="container">
-      <div
-        id="modal-success"
-        className={
-          error || !isLoan
-            ? "modal-noti modal-fail"
-            : "modal-noti modal-success"
+    const handleInputForm = async (event) => {
+        event.preventDefault();
+        const url = `http://localhost:8000/${path}`;
+        const bodyData = JSON.stringify({
+            "Gender": infoUser.gender,
+            "Married": infoUser.married,
+            "Dependents": infoUser.dependents,
+            "Self_Employed": infoUser.selfEmployed,
+            "Salary": infoUser.salary,
+            "Loan_Amount": infoUser.loanAmount,
+            "Loan_Amount_Term": infoUser.loanAmountTerm,
+            "Credit_History": infoUser.creditHistory,
+            "Region": infoUser.region,
+        });
+        const reqOpt = {
+            method: "POST",
+            headers: {"Content-type": "application/json"},
+            body: bodyData
+        };
+        const resp =await fetch(url, reqOpt)
+        const resp2 = await resp.json()
+        if(path === "predictRandomForest") setScore(resp2.score)
+        else  {
+            setLoan(resp2.predict.toString());
+            console.log(isLoan)
         }
-        style={{ display: "none" }}
-      >
-        {!error ? (
-          <span className="inline">
-            {renderTextNotiLoan(isLoan, nameUser)}
-            <FontAwesomeIcon
-              className={isLoan ? "check" : "cancel"}
-              icon={isLoan ? faCheckCircle : faTimesCircle}
-            />
-          </span>
-        ) : (
-          <span className="inline">
-            <div className="p-right">Vui lòng điền đầy đủ thông tin</div>
-            <FontAwesomeIcon className="cancel" icon={faTimesCircle} />
-          </span>
-        )}
-      </div>
+    }
 
-      <div className="form-info-user">
-        <div className="header">
-          <h2>Thông tin khách hàng</h2>
+    const handleClickBtnSubmit = (event) => {
+        // if ((
+        //     !nameUser ||
+        //     !salary ||
+        //     !region ||
+        //     !gender ||
+        //     !married ||
+        //     !dependents || !loanAmount || !loanAmountTerm || !selfEmployed || !creditHistory)
+        //     && path !== "predictRandomForest"
+        // ) {
+        //     notiHandleBtnSubmit();
+        //     return setError(true);
+        // }
+        handleInputForm(event);
+        console.log(infoUser)
+
+        if(path !== "predictRandomForest"){
+            setError(false);
+            notiHandleBtnSubmit();
+            const data = [...listUsers];
+            data.push(infoUser);
+            updateListUsers(data);
+        } else {
+            alert("Tỉ lệ dự đoán là: " + score*100 + "%")
+        }
+    };
+
+    const renderTextNotiLoan = (isLoan, nameUser) => {
+        return (
+            <>
+                {isLoan ==="Y" ? (
+                    <>
+                        <div className="p-right">
+                            Congratulation <span style={{fontWeight: "bold"}}>{nameUser}</span>{" "}
+                            has been borrowed
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="p-right">
+                            Sorry <span style={{fontWeight: "bold"}}>{nameUser}</span>{" "}
+                            Not qualified for a loan
+                        </div>
+                    </>
+                )}
+            </>
+        );
+    };
+
+    return (
+        <div className="container">
+            <div
+                id="modal-success"
+                className={
+                    error || isLoan === "N"
+                        ? "modal-noti modal-fail"
+                        : "modal-noti modal-success"
+                }
+                style={{display: "none"}}
+            >
+                {!error ? (
+                    <span className="inline">
+            {renderTextNotiLoan(isLoan, nameUser)}
+                        <FontAwesomeIcon
+                            className={isLoan === "Y" ? "check" : "cancel"}
+                            icon={isLoan === "Y" ? faCheckCircle : faTimesCircle}
+                        />
+          </span>
+                ) : (
+                    <span className="inline">
+            <div className="p-right">Please fill out the form</div>
+            <FontAwesomeIcon className="cancel" icon={faTimesCircle}/>
+          </span>
+                )}
+            </div>
+
+            <div className="form-info-user">
+                <div className="header">
+                    <h2>Customer Information: using {algorithm}</h2>
+                </div>
+                <div className="content">
+                    <div className="input-wrapper">
+                        <div className="inner">
+                            <div className="title-input">Full name</div>
+                            <Input
+                                type="text"
+                                value={nameUser}
+                                placeholder="Input full name"
+                                onChange={(e) => setNameUser(e.target.value)}
+                            />
+                        </div>
+                        <div className="inner">
+                            <div className="title-input">Salary</div>
+                            <Input
+                                type="number"
+                                value={salary}
+                                onChange={(e) => setSalary(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="input-wrapper">
+                        <div className="inner">
+                            <div className="title-input">Dependents</div>
+                            <Input
+                                type="number"
+                                value={dependents}
+                                onChange={(e) => setDependents(e.target.value)}
+                            />
+                        </div>
+                        <div className="inner">
+                            <div className="title-input">Region</div>
+                            <RegionDropdown
+                                country={country}
+                                value={region}
+                                onChange={setRegion}
+                            />
+                        </div>
+                    </div>
+                    <div className="input-wrapper">
+                        <div className="inner">
+                            <div className="title-input">Gender</div>
+                            <Select
+                                options={option.gender}
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)}
+                            />
+                        </div>
+                        <div className="inner">
+                            <div className="title-input">Married</div>
+                            <Select
+                                options={option.married}
+                                value={married}
+                                onChange={(e) => setMarried(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="input-wrapper">
+                        <div className="inner">
+                            <div className="title-input">Loan Amount</div>
+                            <Input
+                                type="number"
+                                placeholder="Input loan amount"
+                                value={loanAmount}
+                                onChange={(e) => setLoanAmount(e.target.value)}
+                            />
+                        </div>
+                        <div className="inner">
+                            <div className="title-input">Loan Amount Term</div>
+                            <Input
+                                type="number"
+                                placeholder="Input how many years is the loan amount term?"
+                                value={loanAmountTerm}
+                                onChange={(e) => setLoanAmountTerm(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div className="input-wrapper">
+                        <div className="inner">
+                            <div className="title-input">Self Employed</div>
+                            <Select
+                                options={option.selfEmployed}
+                                value={selfEmployed}
+                                onChange={(e) => setSelfEmployed(e.target.value)}
+                            />
+                        </div>
+                        <div className="inner">
+                            <div className="title-input">Credit History</div>
+                            <Input
+                                type="number"
+                                placeholder="Input credit history"
+                                value={creditHistory}
+                                onChange={(e) => setCreditHistory(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div className="footer">
+                    <Button
+                        color="#3498db"
+                        onClick={handleClickBtnSubmit}
+                        name="Submit"
+                    />
+                </div>
+                <div className="error-message">{error}</div>
+            </div>
         </div>
-        <div className="content">
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Họ và tên</div>
-              <Input
-                type="text"
-                value={nameUser}
-                placeholder="Nhập họ và tên"
-                onChange={(e) => setNameUser(e.target.value)}
-              />
-            </div>
-            <div className="inner">
-              <div className="title-input">Lương</div>
-              <Input
-                type="number"
-                value={salary}
-                onChange={(e) => setSalary(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Ngày sinh</div>
-              <Input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </div>
-            <div className="inner">
-              <div className="title-input">Tỉnh / Thành phố</div>
-              <RegionDropdown
-                country={country}
-                value={region}
-                onChange={setRegion}
-              />
-            </div>
-          </div>
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Giới tính</div>
-              <Select
-                options={option.gender}
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-              />
-            </div>
-            <div className="inner">
-              <div className="title-input">Kết hôn</div>
-              <Select
-                options={option.married}
-                value={married}
-                onChange={(e) => setMarried(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Tài sản đảm bảo</div>
-              <Select
-                options={option.collaterals}
-                value={collateral}
-                onChange={(e) => setCollateral(e.target.value)}
-              />
-            </div>
-            <div className="inner">
-              <div className="title-input">Phương thức Trả Lương</div>
-              <Select
-                options={option.paymentMethods}
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Mục đích vay</div>
-              <Select
-                options={option.purposes}
-                value={purpose}
-                onChange={(e) => setPurpose(e.target.value)}
-              />
-            </div>
-            <div className="inner">
-              <div className="title-input">Nhu cầu vay (Năm)</div>
-              <Input
-                type="number"
-                placeholder="Nhập số năm"
-                value={yearNumber}
-                onChange={(e) => setYearNumber(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="input-wrapper">
-            <div className="inner">
-              <div className="title-input">Giá trị đề nghị vay</div>
-              <Input
-                type="number"
-                placeholder="Nhập số tiền cần vay"
-                value={money}
-                onChange={(e) => setMoney(e.target.value)}
-              />
-            </div>
-            <div className="inner"></div>
-          </div>
-        </div>
-        <div className="footer">
-          <Button
-            color="#3498db"
-            onClick={handleClickBtnSubmit}
-            name="Submit"
-          />
-        </div>
-        <div className="error-message">{error}</div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default FormInfoUser;
