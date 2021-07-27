@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useState} from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import InfoUser from "./InfoUser";
@@ -35,13 +35,13 @@ const TableResult = ({ listUsers, updateListUsers }) => {
       <RoundChart listUsers={newListUsers} />
       <div className="table-result">
         <div className="header">
-          <h2>Bảng kết quả cho vay</h2>
+          <h2>Loan results table</h2>
         </div>
 
         <div className="search-box">
           <Input
             type="text"
-            placeholder="Nhập tên khách hàng"
+            placeholder="Input customer"
             value={nameCustomer}
             onChange={(e) => {
               setNameCustomer(e.target.value);
@@ -56,7 +56,7 @@ const TableResult = ({ listUsers, updateListUsers }) => {
             <h4
               style={{ textAlign: "center", paddingBottom: 50, color: "red" }}
             >
-              Không có tên khách hàng này, vui lòng nhập lại!!!
+              This customer name does not exist, please re-enter!!!
             </h4>
           ) : (
             newListUsers.map((user) => (
@@ -66,15 +66,14 @@ const TableResult = ({ listUsers, updateListUsers }) => {
                 loan={user.loan}
                 nameUser={user.nameUser}
                 salary={user.salary}
-                date={user.date}
                 region={user.region}
                 gender={user.gender}
                 married={user.married}
-                collateral={user.collateral}
-                paymentMethod={user.paymentMethod}
-                purpose={user.purpose}
-                yearNumber={user.yearNumber}
-                money={user.money}
+                dependents={user.dependents}
+                selfEmployed={user.selfEmployed}
+                loanAmount={user.loanAmount}
+                loanAmountTerm={user.loanAmountTerm}
+                creditHistory={user.creditHistory}
                 deleteUser={deleteUser}
               />
             ))
